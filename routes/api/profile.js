@@ -10,7 +10,7 @@ const router = express.Router();
 // @access          Private
 router.get('/me', auth, async (req, res) => {
   try {
-    const profile = await Profile.findOne({ user_id: req.user.id }).populate('user', ['name', 'avatar']);
+    const profile = await Profile.findOne({ user: req.user.id }).populate('user', ['name', 'avatar']);
 
     if(!profile) {
       res.status(400).json({ errors: [{ msg: 'No profile found against the user' }] });
@@ -52,6 +52,7 @@ router.post('/', [auth, [
   } = req.body;
 
   let profileFields = {};
+  profileFields.user = req.user.id;
   if(company) profileFields.company = company;
   if(website) profileFields.website = website;
   if(status) profileFields.status = status;
@@ -68,10 +69,10 @@ router.post('/', [auth, [
   if(instagram) profileFields.social.instagram = instagram;
 
   try {
-    let profile = await Profile.findOne({ user_id: req.user.id });
+    let profile = await Profile.findOne({ user: req.user.id });
 
     if(profile) {
-      profile = await Profile.findOneAndUpdate({ user_id: req.user.id }, { $set: profileFields }, { new: true });
+      profile = await Profile.findOneAndUpdate({ user: req.user.id }, { $set: profileFields }, { new: true });
     } else {
       profile = new Profile(profileFields);
       profile.save();
@@ -83,5 +84,42 @@ router.post('/', [auth, [
     res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
   }
 });
+
+// @route         /api/profile
+// @description   Get all profiles
+// @access        Public
+router.get('/', async (req, res) => {
+  try {
+    const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+
+    res.send(profiles);
+  } catch(err) {
+    console.log(err);
+    res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
+  }
+});
+
+// @route         /api/profile/user/:user_id
+// @description   Get given user profile
+// @access        Public
+router.get('/user/:user_id', async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name', 'avatar']);
+
+    if(!profile) {
+      res.status(404).json({ errors: [{ msg: 'Profile not found' }] });
+    }
+
+    res.send(profile);
+  } catch(err) {
+    console.log(err);
+
+    if(err.kind == 'ObjectId') {
+      res.status(404).json({ errors: [{ msg: 'Profile not found' }] });
+    }
+
+    res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
+  }
+})
 
 module.exports = router;
