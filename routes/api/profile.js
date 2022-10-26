@@ -27,8 +27,8 @@ router.get('/me', auth, async (req, res) => {
 // @description   Save and update current user profile
 // @access        Private
 router.post('/', [auth, [
-  check('status').not().isEmpty(),
-  check('skills').not().isEmpty()
+  check('status', 'Status is required').not().isEmpty(),
+  check('skills', 'Location is required').not().isEmpty()
 ]], async (req, res) => {
   const errors = validationResult(req);
 
@@ -131,6 +131,103 @@ router.delete('/', auth, async (req, res) => {
     await User.findOneAndRemove({ _id: req.user.id });
 
     res.json({ msg: 'User deleted successfully' });
+  } catch(err) {
+    console.log(err);
+    res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
+  }
+});
+
+// @route         /api/profile/experience
+// @description   Add experience to current user profile
+// @access        Private
+router.put('/experience', [auth, [
+  check('title', 'Title is required').not().isEmpty(),
+  check('company', 'Company is required').not().isEmpty(),
+  check('from', 'From date is required').not().isEmpty()
+]], async (req, res) => {
+  const errors = validationResult(req);
+
+  if(!errors.isEmpty()) {
+    res.status(400).json({ errors: errors.array() });
+  }
+
+  const experience = req.body;
+
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+    profile.experience.unshift(experience);
+    await profile.save();
+    res.json(profile);
+  } catch(err) {
+    console.log(err);
+    res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
+  }
+})
+
+// @route         /api/profile/experience/:experience_id
+// @description   Remove specific experience from profile
+// @access        Private
+router.delete('/experience/:experience_id', auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id })
+    const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.experience_id);
+
+    if(removeIndex < 0) {
+      res.status(401).json({ errors: [{ msg: 'Experience not found' }] });
+    }
+
+    profile.experience.splice(removeIndex, 1);
+
+    await profile.save();
+    
+    res.json(profile);
+  } catch(err) {
+    console.log(err);
+    res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
+  }
+})
+
+// @route         /api/profile/education
+// @description   Add education to current user profile
+// @access        Private
+router.put('/education', [auth, [
+  check('school', 'School name is required').not().isEmpty(),
+  check('degree', 'Degree title is required').not().isEmpty(),
+  check('fieldofstudy', 'Major in which you studied is required').not().isEmpty(),
+  check('from', 'Major in which you title is required').not().isEmpty()
+]], async (req, res) => {
+  const errors = validationResult(req);
+
+  if(!errors.isEmpty()) {
+    res.status(400).json({ errors: errors.array() });
+  }
+
+  const education = req.body;
+
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+    profile.education.unshift(education);
+    await profile.save();
+    res.json(profile);
+  } catch(err) {
+    console.log(err);
+    res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
+  }
+
+});
+
+router.delete('/education/:education_id', auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+    const removeIndex = profile.education.map(item => item.id).indexOf(req.params.education_id);
+
+    if(removeIndex < 0) {
+      res.status(401).json({ errors: [{ msg: 'Education not found' }] })
+    }
+
+    profile.education.splice(removeIndex, 1);
+    await profile.save();
+    res.json(profile);
   } catch(err) {
     console.log(err);
     res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
