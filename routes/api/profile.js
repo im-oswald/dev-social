@@ -1,4 +1,6 @@
 const express = require('express');
+const request = require('request');
+const config = require('config');
 const { check, validationResult } = require('express-validator');
 const auth = require('./../../middlewares/auth');
 const Profile = require('./../../models/Profile');
@@ -216,6 +218,9 @@ router.put('/education', [auth, [
 
 });
 
+// @route         /api/profile/education/:education_id
+// @description   Delete education for a user profile
+// @access        private
 router.delete('/education/:education_id', auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({ user: req.user.id });
@@ -233,5 +238,37 @@ router.delete('/education/:education_id', auth, async (req, res) => {
     res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
   }
 });
+
+// @route         /api/profile/github/:username
+// @description   Search repos for github user
+// @access        private
+router.get('/github/:username', auth, async (req, res) => {
+  try {
+    const options = {
+      uri: `https://api.github.com/users/${req.params.username}/repos`,
+      method: 'GET',
+      headers: {
+        'User-Agent': 'dev-connector-application'
+      }
+    }
+
+    console.log(options);
+
+    request(options, (error, success, body) => {
+      if(error) {
+        console.log(err);
+      }
+
+      if(success.statusCode !== 200) {
+        return res.status(404).json({ errors: [{ msg: 'Github user not found' }] });
+      }
+
+      res.json(JSON.parse(body));
+    });
+  } catch(err) {
+    console.log(err);
+    res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
+  }
+})
 
 module.exports = router;
