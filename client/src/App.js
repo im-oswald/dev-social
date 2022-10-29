@@ -10,6 +10,8 @@ import Navbar from './components/layout/Navbar';
 import Alert from './components/layout/Alert';
 import setAuthToken from "./utils/setAuthToken";
 import { loadUser } from './actions/auth';
+import Dashboard from './components/dashboard/Dashboard';
+import PrivateRoute from './components/routing/PrivateRoute';
 
 if(localStorage.token) {
   setAuthToken(localStorage.token);
@@ -30,6 +32,12 @@ const App = () => {
           <Route exact path='/' element={<Landing />} />
           <Route exact path='/login' element={<Login />} />
           <Route exact path='/register' element={<Register />} />
+          <Route exact path='/dashboard' element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }>
+          </Route>
         </Routes>
       </Fragment>
     </Router>

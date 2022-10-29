@@ -1,4 +1,4 @@
-import { REGISTER_FAIL, REGISTER_SUCCESS, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_ERROR } from "./types/auth";
+import { REGISTER_FAIL, REGISTER_SUCCESS, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT } from "./types/auth";
 import axios from 'axios';
 import { setAlert } from "./alert";
 import setAuthToken from "../utils/setAuthToken";
@@ -16,6 +16,7 @@ export const register = ({ name, email, password }) => async dispatch => {
     const res = await axios.post('/api/users', body, options)
 
     dispatch({ type: REGISTER_SUCCESS, payload: res.data });
+    dispatch(loadUser());
   } catch(err) {
     const errors = err.response.data.errors;
 
@@ -33,8 +34,6 @@ export const loadUser = () => async dispatch => {
     if(localStorage.token) {
       setAuthToken(localStorage.token);
     }
-
-    console.log(localStorage.token);
 
     const res = await axios.get('/api/auth');
 
@@ -65,4 +64,8 @@ export const login = ({ email, password }) => async dispatch => {
     }
     dispatch({ type: LOGIN_ERROR });
   }
+}
+
+export const logout = () => dispatch => {
+  dispatch({ type: LOGOUT })
 }
