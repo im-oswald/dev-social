@@ -1,4 +1,5 @@
 import { REGISTER_FAIL, REGISTER_SUCCESS, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT } from "./types/auth";
+import { CLEAR_PROFILE } from "./types/profile";
 import axios from 'axios';
 import { setAlert } from "./alert";
 import setAuthToken from "../utils/setAuthToken";
@@ -67,5 +68,6 @@ export const login = ({ email, password }) => async dispatch => {
 }
 
 export const logout = () => dispatch => {
-  dispatch({ type: LOGOUT })
+  dispatch({ type: CLEAR_PROFILE });
+  dispatch({ type: LOGOUT });
 }

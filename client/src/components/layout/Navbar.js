@@ -7,11 +7,17 @@ import PropTypes from 'prop-types';
 const Navbar = ({ logout, isAuthenticated, loading }) => {
   const guestNav = <Fragment>
     <li><Link to="#!">Developers</Link></li>
-    <li><Link to="register">Register</Link></li>
-    <li><Link to="login">Login</Link></li>
+    <li><Link to="/register">Register</Link></li>
+    <li><Link to="/login">Login</Link></li>
   </Fragment>;
 
   const authNav = <Fragment>
+    <li>
+      <Link to="/dashboard">
+        <i className="fas fa-user"></i>
+        <span className='hide-sm'>Dashboard</span>
+      </Link>
+    </li>    
     <li>
       <a href='#!' onClick={logout}>
         <i className="fas fa-sign-out-alt"></i>
