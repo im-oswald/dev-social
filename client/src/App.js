@@ -12,6 +12,9 @@ import setAuthToken from "./utils/setAuthToken";
 import { loadUser } from './actions/auth';
 import Dashboard from './components/dashboard/Dashboard';
 import PrivateRoute from './components/routing/PrivateRoute';
+import ProfileForm from './components/profile-form/ProfileForm';
+import ExperienceForm from './components/profile-form/ExperienceForm';
+import EducationForm from './components/profile-form/EducationForm';
 
 if(localStorage.token) {
   setAuthToken(localStorage.token);
@@ -36,8 +39,27 @@ const App = () => {
             <PrivateRoute>
               <Dashboard />
             </PrivateRoute>
-          }>
-          </Route>
+          } />
+          <Route exact path='/create-profile' element={
+            <PrivateRoute>
+              <ProfileForm edit={false} />
+            </PrivateRoute>
+          } />
+          <Route exact path='/edit-profile' element={
+            <PrivateRoute>
+              <ProfileForm edit={true} />
+            </PrivateRoute>
+          } />
+          <Route exact path='/add-experience' element={
+            <PrivateRoute>
+              <ExperienceForm />
+            </PrivateRoute>
+          } />
+          <Route exact path='/add-education' element={
+            <PrivateRoute>
+              <EducationForm />
+            </PrivateRoute>
+          } />                                                          
         </Routes>
       </Fragment>
     </Router>

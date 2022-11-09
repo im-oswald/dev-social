@@ -15,7 +15,7 @@ router.get('/me', auth, async (req, res) => {
     const profile = await Profile.findOne({ user: req.user.id }).populate('user', ['name', 'avatar']);
 
     if(!profile) {
-      res.status(400).json({ errors: [{ msg: 'No profile found against the user' }] });
+      return res.status(404).json({ errors: [{ msg: 'No profile found against the user' }] });
     }
 
     res.json(profile);
@@ -35,7 +35,7 @@ router.post('/', [auth, [
   const errors = validationResult(req);
 
   if(!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({ errors: errors.array() });
   }
 
   const {
@@ -109,7 +109,7 @@ router.get('/user/:user_id', async (req, res) => {
     const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name', 'avatar']);
 
     if(!profile) {
-      res.status(404).json({ errors: [{ msg: 'Profile not found' }] });
+      return res.status(404).json({ errors: [{ msg: 'Profile not found' }] });
     }
 
     res.send(profile);
@@ -117,7 +117,7 @@ router.get('/user/:user_id', async (req, res) => {
     console.log(err);
 
     if(err.kind == 'ObjectId') {
-      res.status(404).json({ errors: [{ msg: 'Profile not found' }] });
+      return res.status(404).json({ errors: [{ msg: 'Profile not found' }] });
     }
 
     res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
@@ -150,7 +150,7 @@ router.put('/experience', [auth, [
   const errors = validationResult(req);
 
   if(!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({ errors: errors.array() });
   }
 
   const experience = req.body;
@@ -175,7 +175,7 @@ router.delete('/experience/:experience_id', auth, async (req, res) => {
     const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.experience_id);
 
     if(removeIndex < 0) {
-      res.status(401).json({ errors: [{ msg: 'Experience not found' }] });
+      return res.status(401).json({ errors: [{ msg: 'Experience not found' }] });
     }
 
     profile.experience.splice(removeIndex, 1);
@@ -196,12 +196,12 @@ router.put('/education', [auth, [
   check('school', 'School name is required').not().isEmpty(),
   check('degree', 'Degree title is required').not().isEmpty(),
   check('fieldofstudy', 'Major in which you studied is required').not().isEmpty(),
-  check('from', 'Major in which you title is required').not().isEmpty()
+  check('from', 'From date is required').not().isEmpty()
 ]], async (req, res) => {
   const errors = validationResult(req);
 
   if(!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({ errors: errors.array() });
   }
 
   const education = req.body;
@@ -227,7 +227,7 @@ router.delete('/education/:education_id', auth, async (req, res) => {
     const removeIndex = profile.education.map(item => item.id).indexOf(req.params.education_id);
 
     if(removeIndex < 0) {
-      res.status(401).json({ errors: [{ msg: 'Education not found' }] })
+     return res.status(401).json({ errors: [{ msg: 'Education not found' }] })
     }
 
     profile.education.splice(removeIndex, 1);

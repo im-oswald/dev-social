@@ -4,6 +4,9 @@ import { getCurrentProfile } from '../../actions/profile';
 import Spinner from '../spinner/Spinner';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import DashboardActions from './DashboardActions';
+import Experience from './Experience';
+import Education from './Education';
 
 const Dashboard = ({ auth: { user }, profile: { profile, loading }, getCurrentProfile }) => {
   useEffect(() => {
@@ -17,12 +20,14 @@ const Dashboard = ({ auth: { user }, profile: { profile, loading }, getCurrentPr
         <p className='lead'>
           <i className='fas fa-user'></i> Welcome {user?.name}!
         </p>
-        {Object.keys(profile).length ? 'yes' : <Fragment>
+        {Object.keys(profile).length ? <DashboardActions /> : <Fragment>
           <p>It seems you haven't setup your profile yet. Click here to add some info.</p>
           <Link to='/create-profile' className='btn btn-primary my-1'>
             Create Profile
           </Link>
         </Fragment>}
+        <Experience experience={profile.experience} />
+        <Education education={profile.education} />
       </Fragment>}
     </div>
   )
