@@ -55,20 +55,20 @@ router.post('/', [auth, [
 
   let profileFields = {};
   profileFields.user = req.user.id;
-  if(company) profileFields.company = company;
-  if(website) profileFields.website = website;
-  if(status) profileFields.status = status;
-  if(location) profileFields.location = location;
-  if(bio) profileFields.bio = bio;
-  if(githubusername) profileFields.githubusername = githubusername;
-  if(skills) profileFields.skills = skills.split(',').map(skill => skill.trim());
+  if(company != null) profileFields.company = company;
+  if(website != null) profileFields.website = website;
+  if(status != null) profileFields.status = status;
+  if(location != null) profileFields.location = location;
+  if(bio != null) profileFields.bio = bio;
+  if(githubusername != null) profileFields.githubusername = githubusername;
+  if(skills != null) profileFields.skills = skills.split(',').map(skill => skill.trim());
   
   profileFields.social = {}
-  if(youtube) profileFields.social.youtube = youtube;
-  if(twitter) profileFields.social.twitter = twitter;
-  if(facebook) profileFields.social.facebook = facebook;
-  if(linkedin) profileFields.social.linkedin = linkedin;
-  if(instagram) profileFields.social.instagram = instagram;
+  if(youtube != null) profileFields.social.youtube = youtube;
+  if(twitter != null) profileFields.social.twitter = twitter;
+  if(facebook != null) profileFields.social.facebook = facebook;
+  if(linkedin != null) profileFields.social.linkedin = linkedin;
+  if(instagram != null) profileFields.social.instagram = instagram;
 
   try {
     let profile = await Profile.findOne({ user: req.user.id });
@@ -241,8 +241,8 @@ router.delete('/education/:education_id', auth, async (req, res) => {
 
 // @route         /api/profile/github/:username
 // @description   Search repos for github user
-// @access        private
-router.get('/github/:username', auth, async (req, res) => {
+// @access        public
+router.get('/github/:username', async (req, res) => {
   try {
     const options = {
       uri: `https://api.github.com/users/${req.params.username}/repos`,

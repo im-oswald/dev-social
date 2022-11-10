@@ -7,11 +7,12 @@ import { Link } from 'react-router-dom';
 import DashboardActions from './DashboardActions';
 import Experience from './Experience';
 import Education from './Education';
+import { deleteAccount } from '../../actions/profile';
 
-const Dashboard = ({ auth: { user }, profile: { profile, loading }, getCurrentProfile }) => {
+const Dashboard = ({ auth: { user }, profile: { profile, loading }, getCurrentProfile, deleteAccount }) => {
   useEffect(() => {
     getCurrentProfile();
-  }, []);
+  }, [getCurrentProfile]);
 
   return (
     <div className='container'>
@@ -26,8 +27,14 @@ const Dashboard = ({ auth: { user }, profile: { profile, loading }, getCurrentPr
             Create Profile
           </Link>
         </Fragment>}
-        <Experience experience={profile.experience} />
-        <Education education={profile.education} />
+        <Experience experience={profile.experience || []} />
+        <Education education={profile.education || []} />
+
+        <div className='my-2'>
+          <button className='btn btn-danger' onClick={() => deleteAccount()}>
+            <i className='fas fa-user-minus'></i> Delete My Account
+          </button>
+        </div>
       </Fragment>}
     </div>
   )
@@ -35,12 +42,13 @@ const Dashboard = ({ auth: { user }, profile: { profile, loading }, getCurrentPr
 
 Dashboard.propTypes = {
   auth: PropTypes.object.isRequired,
-  profile: PropTypes.object.isRequired
+  profile: PropTypes.object.isRequired,
+  deleteAccount: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  profile: state.profile
+  profile: state.profile,
 })
 
-export default connect(mapStateToProps, { getCurrentProfile })(Dashboard);
+export default connect(mapStateToProps, { getCurrentProfile, deleteAccount })(Dashboard);
