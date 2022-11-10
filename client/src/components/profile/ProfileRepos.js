@@ -15,7 +15,7 @@ const ProfileRepos = ({ username, profile: { repos, loading }, getRepos }) => {
       <h2 className="text-primary my-1">
         <i className="fab fa-github"></i> Github Repos
       </h2>    
-      {!repos.length ? <Spinner /> : repos.map((repo) => <div className="profile-github">
+      {!repos.length ? <Spinner /> : repos.map((repo) => <div key={repo.id} className="profile-github">
         <div className="repo bg-white p-1 my-1">
           <div>
             <h4><a href={repo.html_url} target="_blank"

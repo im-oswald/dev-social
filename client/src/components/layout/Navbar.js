@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 const Navbar = ({ logout, isAuthenticated, loading }) => {
   const guestNav = <Fragment>
     <li><Link to="/profiles">Developers</Link></li>
+    <li><Link to="/posts">Posts</Link></li>
     <li><Link to="/register">Register</Link></li>
     <li><Link to="/login">Login</Link></li>
   </Fragment>;
@@ -14,6 +15,9 @@ const Navbar = ({ logout, isAuthenticated, loading }) => {
   const authNav = <Fragment>
     <li>
       <Link to="/profiles">Developers</Link>
+    </li>
+    <li>
+      <Link to="/posts">Posts</Link>
     </li>
     <li>
       <Link to="/dashboard">
